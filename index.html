@@ -517,16 +517,22 @@
       });
     });
 
-    // Check for shared URL via query param (from iOS Shortcut)
+    // Auto-save shared URL from iOS Shortcut
     const params = new URLSearchParams(window.location.search);
     const sharedUrl = params.get('url');
-    const sharedTitle = params.get('title');
     if (sharedUrl) {
-      document.getElementById('inputUrl').value = decodeURIComponent(sharedUrl);
-      document.getElementById('inputTitle').value = sharedTitle ? decodeURIComponent(sharedTitle) : '';
-      document.getElementById('modalTitle').textContent = 'Add Link';
-      document.getElementById('modal').classList.add('open');
-      // Clean the URL so refreshing doesn't re-trigger
+      let finalUrl = decodeURIComponent(sharedUrl);
+      if (!/^https?:\/\//i.test(finalUrl)) finalUrl = 'https://' + finalUrl;
+      const sharedTitle = params.get('title');
+      items.push({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        url: finalUrl,
+        title: sharedTitle ? decodeURIComponent(sharedTitle) : '',
+        addedAt: Date.now(),
+        read: false,
+        readAt: null
+      });
+      save();
       window.history.replaceState({}, '', window.location.pathname);
     }
 
