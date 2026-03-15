@@ -517,6 +517,19 @@
       });
     });
 
+    // Check for shared URL via query param (from iOS Shortcut)
+    const params = new URLSearchParams(window.location.search);
+    const sharedUrl = params.get('url');
+    const sharedTitle = params.get('title');
+    if (sharedUrl) {
+      document.getElementById('inputUrl').value = decodeURIComponent(sharedUrl);
+      document.getElementById('inputTitle').value = sharedTitle ? decodeURIComponent(sharedTitle) : '';
+      document.getElementById('modalTitle').textContent = 'Add Link';
+      document.getElementById('modal').classList.add('open');
+      // Clean the URL so refreshing doesn't re-trigger
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
     render();
 
     // Register service worker
